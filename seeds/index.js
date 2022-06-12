@@ -3,7 +3,10 @@ const cities = require("./cities");
 const {places, descriptors} = require("./seedHelpers");
 const Campground = require("../models/campground");
 
-mongoose.connect("mongodb://localhost:27017/yelp-camp", {
+//const dbUrl = "mongodb://localhost:27017/yelp-camp";
+const dbUrl = "mongodb+srv://ourFirstUser:hErIWBErgrFehj7R@cluster0.m8arz.mongodb.net/?retryWrites=true&w=majority";
+
+mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -12,6 +15,9 @@ const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
     console.log("Database connected!");
+    seedDB().then(() => {
+        mongoose.connection.close();
+    });
 });
 
 const sample = array => array[Math.floor(Math.random() * array.length)];
@@ -23,7 +29,7 @@ const seedDB = async () => {
         const price = Math.floor(Math.random() * 20) + 10;
         const camp = new Campground({
             // your user id
-            author: "6293650dd4e86eea2d43f1d0",
+            author: "62a5cc7e4a81bec025f2ff67",
             location: `${cities[random1000].city}, ${cities[random1000].state}`,
             title: `${sample(descriptors)} ${sample(places)}`,
             description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus quam consequuntur perferendis aperiam ipsam quod, nisi cumque laboriosam rerum. Quas, incidunt asperiores. Laborum, molestias! Quia fuga inventore esse ducimus aliquam.",
@@ -53,6 +59,4 @@ const seedDB = async () => {
     }
 
 }
-seedDB().then(() => {
-    mongoose.connection.close();
-});
+
